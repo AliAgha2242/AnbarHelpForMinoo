@@ -1,0 +1,37 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31911.196
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AnbarHelp", "CheckKardexManfi\AnbarHelp.csproj", "{6BD30BFD-0BDA-4EA9-8F22-D8DD79168C9C}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Database", "Database\Database.csproj", "{43EBBEC5-D0A4-4EFF-8ACB-6191D81FB5BF}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "additions", "additions\additions.csproj", "{62686D5D-FF2B-4E5B-AED8-8C36E96AE831}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6BD30BFD-0BDA-4EA9-8F22-D8DD79168C9C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BD30BFD-0BDA-4EA9-8F22-D8DD79168C9C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BD30BFD-0BDA-4EA9-8F22-D8DD79168C9C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BD30BFD-0BDA-4EA9-8F22-D8DD79168C9C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{43EBBEC5-D0A4-4EFF-8ACB-6191D81FB5BF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{43EBBEC5-D0A4-4EFF-8ACB-6191D81FB5BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{43EBBEC5-D0A4-4EFF-8ACB-6191D81FB5BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{43EBBEC5-D0A4-4EFF-8ACB-6191D81FB5BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{62686D5D-FF2B-4E5B-AED8-8C36E96AE831}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{62686D5D-FF2B-4E5B-AED8-8C36E96AE831}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{62686D5D-FF2B-4E5B-AED8-8C36E96AE831}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{62686D5D-FF2B-4E5B-AED8-8C36E96AE831}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {DAE1D1C0-4E3A-4D7C-86D5-3AE42DB66A4C}
+	EndGlobalSection
+EndGlobal
