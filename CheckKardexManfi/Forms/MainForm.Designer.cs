@@ -30,6 +30,7 @@ namespace AnbarHelp.Forms
         private void InitializeComponent()
         {
             this.KardexManfiFrmBtn = new System.Windows.Forms.Button();
+            this.DiffMaliAndAnbar = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // KardexManfiFrmBtn
@@ -42,11 +43,22 @@ namespace AnbarHelp.Forms
             this.KardexManfiFrmBtn.UseVisualStyleBackColor = true;
             this.KardexManfiFrmBtn.Click += new System.EventHandler(this.KardexManfiFrmBtn_Click);
             // 
+            // DiffMaliAndAnbar
+            // 
+            this.DiffMaliAndAnbar.Location = new System.Drawing.Point(177, 27);
+            this.DiffMaliAndAnbar.Name = "DiffMaliAndAnbar";
+            this.DiffMaliAndAnbar.Size = new System.Drawing.Size(132, 36);
+            this.DiffMaliAndAnbar.TabIndex = 0;
+            this.DiffMaliAndAnbar.Text = "اختلاف سند مالی و انبار";
+            this.DiffMaliAndAnbar.UseVisualStyleBackColor = true;
+            this.DiffMaliAndAnbar.Click += new System.EventHandler(this.DiffMaliAndAnbar_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1232, 450);
+            this.Controls.Add(this.DiffMaliAndAnbar);
             this.Controls.Add(this.KardexManfiFrmBtn);
             this.Name = "MainForm";
             this.Text = "MainForm";
@@ -57,5 +69,6 @@ namespace AnbarHelp.Forms
         #endregion
 
         private System.Windows.Forms.Button KardexManfiFrmBtn;
+        private System.Windows.Forms.Button DiffMaliAndAnbar;
     }
 }

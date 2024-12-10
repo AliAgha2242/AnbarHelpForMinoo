@@ -22,7 +22,13 @@ namespace AnbarHelp.Forms
         {
             KardexManfiFrm kardexManfiFrm = new KardexManfiFrm();
             kardexManfiFrm.Show();
-            this.WindowState = FormWindowState.Minimized;
+            //this.WindowState = FormWindowState.Minimized;
+        }
+
+        private void DiffMaliAndAnbar_Click(object sender, EventArgs e)
+        {
+            DiffMaliAndAndAnbarFrm frm = new DiffMaliAndAndAnbarFrm();
+            frm.Show();
         }
     }
 }

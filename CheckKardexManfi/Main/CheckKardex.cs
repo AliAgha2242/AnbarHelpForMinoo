@@ -41,7 +41,7 @@ namespace CheckKardexManfi
                         return new BaseResult<(string, string, double)>(("", "", 0), "اسناد از چند واحد تجاری میباشد. لطفا از یک واحد تجاری سند جدا کنید", false);
                     }
                 }
-                catch (Exception)
+                catch (Exception e)
                 {
                     return new BaseResult<(string, string, double)>(("", "", 0), "سند وارد شده نا معتبر است \n واحد تجاری ، سرور ، یا پایگاه داده سند یافت نشد ", false);
                 }
