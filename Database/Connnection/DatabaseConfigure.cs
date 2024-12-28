@@ -23,7 +23,8 @@ namespace Database.Connnection
                                                                         Connection Timeout=30";
 
             string newDbName = dbName == "MIS_GHSETAD" ? "MIS" : dbName;
-            CN = CN.Replace("MIS_Ghasem", newDbName).Replace("cds", serverName);
+            string newServerName = serverName == "ArdebilServer " ? "Ardebils" : serverName;
+            CN = CN.Replace("MIS_Ghasem", newDbName).Replace("cds", newServerName);
         }
         public BaseResult<bool> checkConnection()
         {

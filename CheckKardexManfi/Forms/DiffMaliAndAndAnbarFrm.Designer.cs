@@ -29,9 +29,6 @@ namespace AnbarHelp.Forms
         /// </summary>
         private void InitializeComponent()
         {
-            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
-            //this.TopMost = true;
-            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.LblServerSelect = new System.Windows.Forms.Label();
             this.ServerComBox = new System.Windows.Forms.ComboBox();
             this.ServerSelected = new System.Windows.Forms.Button();
@@ -40,11 +37,13 @@ namespace AnbarHelp.Forms
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.GVDiffAnbarAndMali = new System.Windows.Forms.DataGridView();
             this.GVDiffMaliAndAnbar = new System.Windows.Forms.DataGridView();
-
+            this.GVResultAnbarAndMali = new System.Windows.Forms.DataGridView();
+            this.dataGridView2 = new System.Windows.Forms.DataGridView();
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVDiffAnbarAndMali)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVDiffMaliAndAnbar)).BeginInit();
-
+            ((System.ComponentModel.ISupportInitialize)(this.GVResultAnbarAndMali)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).BeginInit();
             this.SuspendLayout();
             // 
             // LblServerSelect
@@ -94,11 +93,11 @@ namespace AnbarHelp.Forms
             this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.dataGridView1.GridColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.dataGridView1.Location = new System.Drawing.Point(12, 12);
+            this.dataGridView1.MaximumSize = new System.Drawing.Size(1560, 200);
             this.dataGridView1.Name = "dataGridView1";
             this.dataGridView1.RowTemplate.Height = 25;
             this.dataGridView1.Size = new System.Drawing.Size(1560, 200);
             this.dataGridView1.TabIndex = 0;
-            this.dataGridView1.MaximumSize = new System.Drawing.Size(1560,200);
             // 
             // GVDiffAnbarAndMali
             // 
@@ -106,11 +105,11 @@ namespace AnbarHelp.Forms
             this.GVDiffAnbarAndMali.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GVDiffAnbarAndMali.GridColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.GVDiffAnbarAndMali.Location = new System.Drawing.Point(12, 220);
+            this.GVDiffAnbarAndMali.MaximumSize = new System.Drawing.Size(775, 250);
             this.GVDiffAnbarAndMali.Name = "GVDiffAnbarAndMali";
             this.GVDiffAnbarAndMali.RowTemplate.Height = 25;
-            this.GVDiffAnbarAndMali.Size = new System.Drawing.Size(775, 250);
+            this.GVDiffAnbarAndMali.Size = new System.Drawing.Size(775, 200);
             this.GVDiffAnbarAndMali.TabIndex = 0;
-            this.GVDiffAnbarAndMali.MaximumSize = new System.Drawing.Size(775, 250);
             // 
             // GVDiffMaliAndAnbar
             // 
@@ -118,11 +117,37 @@ namespace AnbarHelp.Forms
             this.GVDiffMaliAndAnbar.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
             this.GVDiffMaliAndAnbar.GridColor = System.Drawing.SystemColors.GradientInactiveCaption;
             this.GVDiffMaliAndAnbar.Location = new System.Drawing.Point(794, 220);
+            this.GVDiffMaliAndAnbar.MaximumSize = new System.Drawing.Size(775, 250);
             this.GVDiffMaliAndAnbar.Name = "GVDiffMaliAndAnbar";
             this.GVDiffMaliAndAnbar.RowTemplate.Height = 25;
-            this.GVDiffMaliAndAnbar.Size = new System.Drawing.Size(775, 250);
+            this.GVDiffMaliAndAnbar.Size = new System.Drawing.Size(775, 200);
             this.GVDiffMaliAndAnbar.TabIndex = 0;
-            this.GVDiffMaliAndAnbar.MaximumSize = new System.Drawing.Size(775, 250);
+            // 
+            // GVResultAnbarAndMali
+            // 
+            this.GVResultAnbarAndMali.BackgroundColor = System.Drawing.Color.AliceBlue;
+            this.GVResultAnbarAndMali.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.GVResultAnbarAndMali.GridColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.GVResultAnbarAndMali.Location = new System.Drawing.Point(795, 430);
+            this.GVResultAnbarAndMali.MaximumSize = new System.Drawing.Size(775, 250);
+            this.GVResultAnbarAndMali.Name = "GVResultAnbarAndMali";
+            this.GVResultAnbarAndMali.RowTemplate.Height = 25;
+            this.GVResultAnbarAndMali.Size = new System.Drawing.Size(775, 200);
+            this.GVResultAnbarAndMali.TabIndex = 0;
+            this.GVResultAnbarAndMali.Visible = false;
+            // 
+            // dataGridView2
+            // 
+            this.dataGridView2.BackgroundColor = System.Drawing.Color.AliceBlue;
+            this.dataGridView2.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView2.GridColor = System.Drawing.SystemColors.GradientInactiveCaption;
+            this.dataGridView2.Location = new System.Drawing.Point(12, 430);
+            this.dataGridView2.MaximumSize = new System.Drawing.Size(775, 250);
+            this.dataGridView2.Name = "dataGridView2";
+            this.dataGridView2.RowTemplate.Height = 25;
+            this.dataGridView2.Size = new System.Drawing.Size(775, 200);
+            this.dataGridView2.TabIndex = 0;
+            this.dataGridView2.Visible = false;
             // 
             // DiffMaliAndAndAnbarFrm
             // 
@@ -132,21 +157,24 @@ namespace AnbarHelp.Forms
             this.Controls.Add(this.dataGridView1);
             this.Controls.Add(this.GVDiffAnbarAndMali);
             this.Controls.Add(this.GVDiffMaliAndAnbar);
-
             this.Controls.Add(this.ToDateTxt);
             this.Controls.Add(this.FromDateTxt);
             this.Controls.Add(this.ServerSelected);
             this.Controls.Add(this.ServerComBox);
             this.Controls.Add(this.LblServerSelect);
+            this.Controls.Add(this.dataGridView2);
+            this.Controls.Add(this.GVResultAnbarAndMali);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "DiffMaliAndAndAnbarFrm";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "DiffMaliAndAndAnbarFrm";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.Load += new System.EventHandler(this.DiffMaliAndAndAnbarFrm_Load);
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVDiffAnbarAndMali)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.GVDiffMaliAndAnbar)).EndInit();
-
-
+            ((System.ComponentModel.ISupportInitialize)(this.GVResultAnbarAndMali)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView2)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -162,6 +190,7 @@ namespace AnbarHelp.Forms
         private System.Windows.Forms.DataGridView dataGridView1;
         private System.Windows.Forms.DataGridView GVDiffAnbarAndMali;
         private System.Windows.Forms.DataGridView GVDiffMaliAndAnbar;
-
+        private System.Windows.Forms.DataGridView GVResultAnbarAndMali;
+        private System.Windows.Forms.DataGridView dataGridView2;
     }
 }

@@ -375,65 +375,73 @@ namespace DifffMalIAndAnbar.QueriesText
                                                                         	TE.SanadNO,TE.SanadDate,TE.Sum_MeghdarRiale,TE.Sum_Meghdar,TE.Ekhtelaf,@ErrMessage
                                                                         FROM #TempReverse AS TE";
         private static string DiffMaliAndAnbar { get; set; } = @"DROP TABLE IF EXISTS #Temp
-														  DECLARE 
-														  @TarakoneshDs AS VARCHAR(150) = 'MyTarakoneshDs',
-														  @SanadDate AS FoDateFull = MySanadDate,
-														  @ErrMessage AS VARCHAR (300) = ''
-														  
-														  SELECT T.* 
-														  INTO #Temp 
-														  FROM(
-														  SELECT CASE
-														  	WHEN Len(SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))) <> 0
-														  		THEN SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))
-														  	ELSE CONVERT(VARCHAR,PeigiriNo)
-														  	END AS PeigiriNo
-														  	 
-														  	,PeigiriDate 
-														  	,SUM(ISNULL(Bed,0)) AS Sum_MeghdarRiale
-														  	,SUM(ISNULL(maSanadHa.meghdar,0)) AS Sum_Meghdar
-														  	,SUM(ISNULL(Bed,0)) - SUM(ISNULL(Bes,0)) AS Ekhtelaf
-														  FROM maSanadHa 
-														  WHERE SanadSN IN (SELECT SanadSN FROM maSanad WHERE SharhSanad LIKE CONCAT('%',@TarakoneshDs,'%')
-														  				 AND SanadDate = @SanadDate)
-														  GROUP BY 
-														  	CASE
-														  	WHEN Len(SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))) <> 0
-														  		THEN SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))
-														  	ELSE CONVERT(VARCHAR,PeigiriNo)
-														  	End
-														  	,PeigiriDate
-														  
-														  EXCEPT
-														  
-														  
-														  SELECT
-														  	Convert(Varchar,SanadNO) as SanadNO
-														  	,SanadDate
-														  	,CASE 
-														  		WHEN TarakoneshSN > 50 THEN SUM(ISNULL(MeghdareSadereh,0))*paKalaNerkh.NerkhStandard
-														  		ELSE SUM(ISNULL(MeghdareVaredeh,0))*paKalaNerkh.NerkhStandard
-														  	END AS Sum_MeghdarRiale
-														  	,SUM(ISNULL(MeghdareVaredeh,MeghdareSadereh)) AS Sum_Meghdar
-														  	,SUM(ISNULL(MeghdareVaredeh,0)) - SUM(ISNULL(MeghdareSadereh,0)) AS Ekhtelaf
-														  FROM abSanadHa
-														  JOIN paKalaNerkh ON paKalaNerkh.kalaSN = abSanadHa.KalaSN 
-														  	AND LEFT(StartDate,4) = LEFT(@SanadDate,4)
-														  JOIN abSanad ON abSanad.SanadSN = abSanadHa.SanadSN
-														  WHERe sanadDate = @SanadDate
-														  	AND TarakoneshSN = (SELECT TOP 1 TarakoneshSN FROM abTarakonesh 
-														  						WHERE TarakoneshDs LIKE CONCAT('%',@TarakoneshDs,'%'))
-														  GROUP BY SanadNO,SanadDate,abSanadHa.KalaSN,TarakoneshSN,NerkhStandard
-														  )AS T
-														  
-														  IF(SELECT COUNT(#Temp.Ekhtelaf) FROM #Temp WHERE Ekhtelaf <> 0) > 0
-														  BEGIN
-														  	SET @ErrMessage = 'سند دارای اختلاف یافت شد'
-														  END
-														  
-														  SELECT
-														  	TE.PeigiriNo,TE.PeigiriDate,TE.Sum_MeghdarRiale,TE.Sum_Meghdar,TE.Ekhtelaf,@ErrMessage AS Error
-														  FROM #Temp AS TE";
+                                                                 DECLARE 
+                                                                 @TarakoneshDs AS VARCHAR(150) = 'MyTarakoneshDs',
+                                                                 @SanadDate AS FoDateFull = MySanadDate,
+                                                                 @ErrMessage AS VARCHAR (300) = ''
+                                                                 
+                                                                 
+                                                                 
+                                                                 Select * Into #Temp from 
+                                                                 (
+                                                                 SELECT CASE
+                                                                 	WHEN Len(SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))) <> 0
+                                                                 		THEN SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))
+                                                                 	ELSE CONVERT(VARCHAR,PeigiriNo)
+                                                                 	END AS PeigiriNo
+                                                                 	 
+                                                                 	,PeigiriDate 
+                                                                 	,Convert(decimal(18,0),SUM(ISNULL(Bed,0))) AS Sum_MeghdarRiale
+                                                                 	,Convert(decimal(18,0),SUM(ISNULL(maSanadHa.meghdar,0)) / 2) AS Sum_Meghdar 
+                                                                 	--,Convert(decimal(18,0),SUM(ISNULL(Bed,0)) - SUM(ISNULL(Bes,0))) AS Ekhtelaf
+                                                                 FROM maSanadHa 
+                                                                 WHERE SanadSN IN (SELECT SanadSN FROM maSanad WHERE SharhSanad LIKE CONCAT('%',@TarakoneshDs,'%')
+                                                                 				 AND SanadDate = @SanadDate)
+                                                                 GROUP BY 
+                                                                 	CASE
+                                                                 	WHEN Len(SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))) <> 0
+                                                                 		THEN SUBSTRING(CAST(PeigiriNo AS VARCHAR),0,CHARINDEX('_',CAST (PeigiriNo AS VARCHAR),0))
+                                                                 	ELSE CONVERT(VARCHAR,PeigiriNo)
+                                                                 	End
+                                                                 	,PeigiriDate
+                                                                 
+                                                                 Except
+                                                                 
+                                                                 Select SanadNO , SanadDate,Sum(Sum_MeghdarRiale) AS Sum_MeghdarRiale,Sum(Sum_Meghdar) as Sum_Meghdar--,SUM(Ekhtelaf) AS Ekhtelaf 
+                                                                 
+                                                                 From(SELECT
+                                                                 	Convert(Varchar,SanadNO) as SanadNO
+                                                                 	,SanadDate
+                                                                 	,Convert(decimal(18,0),CASE 
+                                                                 		WHEN TarakoneshSN > 50 THEN SUM(ISNULL(MeghdareSadereh,0))*paKalaNerkh.NerkhStandard
+                                                                 		ELSE SUM(ISNULL(MeghdareVaredeh,0))*paKalaNerkh.NerkhStandard
+                                                                 	END) AS Sum_MeghdarRiale
+                                                                 	,Convert(decimal(18,0),SUM(ISNULL(MeghdareVaredeh,MeghdareSadereh))) AS Sum_Meghdar
+                                                                 	--,Convert(decimal(18,0),SUM(ISNULL(MeghdareVaredeh,0)) - SUM(ISNULL(MeghdareSadereh,0))) AS Ekhtelaf
+                                                                  FROM abSanadHa
+                                                                 JOIN paKalaNerkh ON paKalaNerkh.kalaSN = abSanadHa.KalaSN 
+                                                                 	AND LEFT(StartDate,4) = LEFT(@SanadDate,4)
+                                                                 JOIN abSanad ON abSanad.SanadSN = abSanadHa.SanadSN
+                                                                 WHERe sanadDate = @SanadDate
+                                                                 	AND TarakoneshSN = (SELECT TOP 1 TarakoneshSN FROM abTarakonesh 
+                                                                 						WHERE TarakoneshDs LIKE CONCAT('%',@TarakoneshDs,'%'))
+                                                                 GROUP BY SanadNO,SanadDate,abSanadHa.KalaSN,TarakoneshSN,NerkhStandard)T
+                                                                 Group by SanadNO , SanadDate
+                                                                 )  AS Temp
+                                                                 
+                                                                 
+                                                                 
+                                                                 
+                                                                 --IF(SELECT COUNT(#Temp.Ekhtelaf) FROM #Temp WHERE Ekhtelaf <> 0) > 0
+                                                                 --BEGIN
+                                                                 --	SET @ErrMessage = 'سند دارای اختلاف یافت شد'
+                                                                 --END
+                                                                 SELECT
+                                                                 	TE.PeigiriNo,TE.PeigiriDate,TE.Sum_MeghdarRiale,TE.Sum_Meghdar--,TE.Ekhtelaf
+                                                                 	--,@ErrMessage AS Error
+                                                                 FROM #Temp AS TE
+                                                                 
+                                                                 ";
         private static string DiffAnbarAndMali { get; set; } = @"DROP TABLE IF EXISTS #TempReverse
 														  DECLARE 
 														  @TarakoneshDs AS VARCHAR(150) = 'MyTarakoneshDs',
@@ -443,19 +451,19 @@ namespace DifffMalIAndAnbar.QueriesText
 														  SELECT T.*
 														  INTO #TempReverse
 														  FROM
-														  (SELECT DrivedTable.SanadNO,SanadDate,SUM(Sum_MeghdarRiale)AS Sum_MeghdarRiale ,SUM(Ekhtelaf) AS Ekhtelaf
+														  (SELECT DrivedTable.SanadNO,SanadDate,SUM(Sum_MeghdarRiale)AS Sum_MeghdarRiale --,SUM(Ekhtelaf) AS Ekhtelaf
 														  ,SUM(Sum_Meghdar) AS Sum_Meghdar
 														   
 														  FROM(
 														  SELECT
 														  	Convert(varchar,SanadNO) AS SanadNO
 														  	,absanad.SanadDate
-														  	,CASE 
+														  	,Convert(decimal(18,0),CASE 
 														  		WHEN TarakoneshSN > 50 THEN SUM(ISNULL(MeghdareSadereh,0))*paKalaNerkh.NerkhStandard
 														  		ELSE SUM(ISNULL(MeghdareVaredeh,0))*paKalaNerkh.NerkhStandard
-														  	END AS Sum_MeghdarRiale
-														  	,SUM(ISNULL(MeghdareVaredeh,MeghdareSadereh)) AS Sum_Meghdar
-														  	,0 AS Ekhtelaf
+														  	END) AS Sum_MeghdarRiale
+														  	,Convert(decimal(18,0),SUM(ISNULL(MeghdareVaredeh,MeghdareSadereh))) AS Sum_Meghdar
+														  	--,0 AS Ekhtelaf
 														  FROM abSanadHa
 														  JOIN paKalaNerkh ON paKalaNerkh.kalaSN = abSanadHa.KalaSN 
 														  	AND LEFT(StartDate,4) = LEFT(@SanadDate,4)
@@ -474,9 +482,9 @@ namespace DifffMalIAndAnbar.QueriesText
 														  	ELSE CONVERT(VARCHAR,PeigiriNo)
 														  	END AS PeigiriNo
 														  	,PeigiriDate 
-														  	,SUM(ISNULL(Bed,0)) AS Sum_MeghdarRiale
-														  	,SUM(ISNULL(maSanadHa.meghdar,0)) AS Sum_Meghdar
-														  	,SUM(ISNULL(Bed,0)) - SUM(ISNULL(Bes,0)) AS Ekhtelaf
+														  	,Convert(decimal(18,0),SUM(ISNULL(Bed,0))) AS Sum_MeghdarRiale
+														  	,Convert(decimal(18,0),SUM(ISNULL(maSanadHa.meghdar,0)) / 2) AS Sum_Meghdar 
+														  	--,SUM(ISNULL(Bed,0)) - SUM(ISNULL(Bes,0)) AS Ekhtelaf
 														  FROM maSanadHa 
 														  WHERE SanadSN IN (SELECT SanadSN FROM maSanad WHERE SharhSanad LIKE CONCAT('%',@TarakoneshDs,'%')
 														  				 AND SanadDate = @SanadDate)
@@ -491,88 +499,91 @@ namespace DifffMalIAndAnbar.QueriesText
 														  
 														  )AS T
 														  
-														  IF(SELECT COUNT(#TempReverse.Ekhtelaf) FROM #TempReverse WHERE Ekhtelaf <> 0) > 0
-														  BEGIN
-														  	SET @ErrMessage = 'سند دارای اختلاف یافت شد'
-														  END
+														  --IF(SELECT COUNT(#TempReverse.Ekhtelaf) FROM #TempReverse WHERE Ekhtelaf <> 0) > 0
+														  --BEGIN
+														  --	SET @ErrMessage = 'سند دارای اختلاف یافت شد'
+														  -- END
 														  
 														  SELECT
-														  	TE.SanadNO,TE.SanadDate,TE.Sum_MeghdarRiale,TE.Sum_Meghdar,TE.Ekhtelaf,@ErrMessage AS Error
+														  	TE.SanadNO,TE.SanadDate,TE.Sum_MeghdarRiale,TE.Sum_Meghdar --,TE.Ekhtelaf
+                                                            --,@ErrMessage AS Error
 														  FROM #TempReverse AS TE";
-        private static string MultipleQueryForMaliAndAnbar { get; set; } = @"Declare @sanadNo AS Varchar = 'MySanadNo',
-                                                                           @SanadDate AS Varchar = 'MySanadDate'
-                                                                         
-                                                                           Drop Table If Exists OutPutTable
-                                                                           
-                                                                           Create Table #OutPutTable
-                                                                           (
-                                                                               ErrMessage varchar(500),
-                                                                           	SanadSn Decimal(18,3),
-                                                                           	sanadnoIsNotFound Varchar(200)
-                                                                           )
-                                                                           
-                                                                           SELECT SanadSN
-                                                                           Into #SanadsTable
-                                                                           from Log.._Log_abSanad  as Lab
-                                                                           where SanadNO in (select* from dbo.StrToTable(@SanadNo)) And Left(Lab.SanadDate,4) = LEFT(@SanadDate,4)
-                                                                           
-                                                                           
-                                                                           --if(select Count(sanadSn) from #SanadHaTable) < 1
-                                                                           --Begin
-                                                                           --	Insert #OutPutTable(ErrMessage)
-                                                                           --	Values('سند یافت نشد')
-                                                                           
-                                                                           --	Select* from #OutPutTable
-                                                                           --	Return
-                                                                           --End
-                                                                          
-                                                                           IF
-                                                                           (select Count(Distinct Col1) from dbo.StrToTable(@sanadNo) left outer Join Log.._LOG_abSanad
-                                                                           on sanadNo = Col1 and Left(SanadDate,4) = Left(@SanadDate,4))>0 
-                                                                           Begin
-                                                                           
-                                                                               select Distinct Col1 AS sanadNo
-                                                                           
-                                                                               Into #sanadThatsNotFound                                     --asnadi ke peida nashodan
-                                                                           	from dbo.StrToTable(@sanadNo) left outer Join Log.._LOG_abSanad
-                                                                               on sanadNo = Col1 and Left(SanadDate,4) = Left(@SanadDate,4)
-                                                                           End
-                                                                           -----------------------------------------------------------------------------
-                                                                           
-                                                                           Select Lab.SanadSN
-                                                                           Into #sanadThatsRemoveFromSanad
-                                                                           from Log.._LOG_abSanad Lab
-                                                                           left outer join absanad on absanad.sanadSn = Lab.sanadSN
-                                                                           where Lab.SanadSN in (select SanadSN from #SanadsTable)
-                                                                           order by Lab.Log_DateTime desc
-                                                                         
-                                                                                
-                                                                           ;with Cte
-                                                                            AS
-                                                                            (
-                                                                           select sanadSN, SanadDate from Log.._LOG_abSanad lab
-                                                                           where lab.SanadSN in (select SanadSN from #SanadsTable) 
-                                                                           group by sanadSN , SanadDate
-                                                                           )
-                                                                           select SanadSN Into #SanadThatsUpdatedDate from Cte
-                                                                           Group by SanadSN
-                                                                           having Count(SanadDate) > 1
-                                                                          
-                                                                           ;with Cte
-                                                                            AS
-                                                                            (
-                                                                           select sanadSN, sanadNo from Log.._LOG_abSanad lab
-                                                                           where lab.SanadSN in (select SanadSN from #SanadsTable) 
-                                                                           group by sanadSN , SanadNO
-                                                                           )
-                                                                           select SanadSN Into #SanadWith2SanadNo from Cte
-                                                                           Group by SanadSN
-                                                                           having Count(sanadNo) > 1
-                                                                           
-                                                                           select* from #sanadThatsNotFound --table 0
-                                                                           select* from #sanadThatsRemoveFromSanad --table 1
-                                                                           select* from #SanadThatsUpdatedDate --table 2
-                                                                           select* from #SanadWith2SanadNo --table 3
+        
+        private static string MultipleQueryForMaliAndAnbar { get; set; } = @"Declare @sanadNo AS Varchar(60) = 'MySanadNo',
+                                                                             @SanadDate AS Varchar(60) = 'MySanadDate'
+                                                                             
+                                                                             Declare @SanadsTable AS Table(sanadSN Decimal(18,3))
+                                                                             Declare @sanadThatsNotFound As Table(sanadNo Varchar(60))
+                                                                             Declare @sanadThatsRemoveFromSanad AS Table(sanadSN Decimal(18,3))
+                                                                             Declare @SanadThatsUpdatedDate AS Table(sanadSN Decimal(18,3))
+                                                                             Declare @SanadWith2SanadNo AS Table(sanadSN Decimal(18,3))
+                                                                             
+                                                                             Insert @SanadsTable
+                                                                             SELECT SanadSN 
+                                                                             from Log.._Log_abSanad  as Lab
+                                                                             where SanadNO in (select Col1 from dbo.StrToTable(@SanadNo)) And Left(Lab.SanadDate,4) = LEFT(@SanadDate,4)
+                                                                             
+                                                                             
+                                                                             --if(select Count(sanadSn) from #SanadHaTable) < 1
+                                                                             --Begin
+                                                                             --	Insert #OutPutTable(ErrMessage)
+                                                                             --	Values('سند یافت نشد')
+                                                                             
+                                                                             --	Select* from #OutPutTable
+                                                                             --	Return
+                                                                             --End
+                                                                             
+                                                                             IF
+                                                                             (select Count(Distinct Col1) from dbo.StrToTable(@sanadNo) left outer Join Log.._LOG_abSanad
+                                                                             on sanadNo = Col1 and Left(SanadDate,4) = Left(@SanadDate,4))>0 
+                                                                             Begin
+                                                                             
+                                                                                 Insert @sanadThatsNotFound 
+                                                                                 select Distinct Col1 AS sanadNo                           --asnadi ke peida nashodan
+                                                                             	from dbo.StrToTable(@sanadNo) left outer Join Log.._LOG_abSanad
+                                                                                 on sanadNo = Col1 and Left(SanadDate,4) = Left(@SanadDate,4)
+                                                                             End
+                                                                             -----------------------------------------------------------------------------
+                                                                             
+                                                                             Insert @sanadThatsRemoveFromSanad
+                                                                             Select Lab.SanadSN
+                                                                             from Log.._LOG_abSanad Lab
+                                                                             left outer join absanad on absanad.sanadSn = Lab.sanadSN
+                                                                             where Lab.SanadSN in (select SanadSN from @SanadsTable)
+                                                                             and abSanad.SanadSN is null
+                                                                             order by Lab.Log_DateTime desc
+                                                                             
+                                                                                  
+                                                                             ;with Cte
+                                                                              AS
+                                                                              (
+                                                                             	select sanadSN, SanadDate from Log.._LOG_abSanad lab
+                                                                             	where lab.SanadSN in (select SanadSN from @SanadsTable) 
+                                                                             	group by sanadSN , SanadDate
+                                                                             )
+                                                                             Insert @SanadThatsUpdatedDate
+                                                                             select SanadSN from Cte
+                                                                             Group by SanadSN
+                                                                             having Count(SanadDate) > 1
+                                                                             
+                                                                             ;with Cte
+                                                                              AS
+                                                                              (
+                                                                             	select sanadSN, sanadNo from Log.._LOG_abSanad lab
+                                                                             	where lab.SanadSN in (select SanadSN from @SanadsTable) 
+                                                                             	group by sanadSN , SanadNO
+                                                                             )
+                                                                             Insert @SanadWith2SanadNo
+                                                                             select SanadSN from Cte
+                                                                             Group by SanadSN
+                                                                             having Count(sanadNo) > 1
+                                                                             select distinct 
+                                                                             t1.sanadNo AS sanadThatsNotFound,
+                                                                             t2.sanadSN AS sanadThatsRemoveFromSanad,
+                                                                             t3.sanadSN AS SanadThatsUpdatedDate,
+                                                                             t4.sanadSN AS SanadWith2SanadNo
+                                                                             from @sanadThatsNotFound t1 full join @sanadThatsRemoveFromSanad t2 on t1.sanadNo = t2.sanadSN
+                                                                             full join @SanadThatsUpdatedDate t3 on t2.sanadSN=t3.sanadSN full join @SanadWith2SanadNo t4 on t3.sanadSN=t4.sanadSN
                                                                            ";
 
         public static string DiffMaliAndAnbarBuilder(string tarakoneshDs, string sanadDate)

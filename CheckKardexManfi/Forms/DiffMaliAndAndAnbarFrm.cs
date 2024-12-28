@@ -87,7 +87,7 @@ namespace AnbarHelp.Forms
             };
 
 
-            var result = diffMain.ShowDiffrent(ServerName, FindDbResult.TObject, FromDateTxt.Text, ToDateTxt.Text);
+            var result = diffMain.ShowDiffrent(ServerName, FindDbResult.TObject, FromDateTxt.Text, ToDateTxt.Text); // asli
             if (!result.IsSuccess)
             {
                 MessageBox.Show(result.ErrorMessage);
@@ -96,13 +96,12 @@ namespace AnbarHelp.Forms
             }
             if (result.TObject.Count() == 0)
             {
-                MessageBox.Show(string.Format("در این سرور {0} هیچگونه مغایرتی وجود ندارد.",ServerName));
+                MessageBox.Show(string.Format("در این سرور {0} هیچگونه مغایرتی وجود ندارد.", ServerName));
                 this.Cursor = Cursors.Default;
                 return;
             }
             this.dataGridView1.DataSource = result.TObject.ToList();
-            var DiffDtoResult = diffMain.FindDiffrentReturnSanad(result.TObject.First().Anbar_TarakoneshDs, result.TObject.First().Anbar_SanadDate
-                , serverInfo.serverName, serverInfo.dbName);
+            var DiffDtoResult = diffMain.FindDiffrentReturnSanad(result.TObject.Select(r => new EkhtelafProp(r.Anbar_TarakoneshDs, r.Anbar_SanadDate)).ToList(), serverInfo.serverName, serverInfo.dbName); //find sanad
 
             if (!DiffDtoResult.IsSuccess)
             {
@@ -111,31 +110,72 @@ namespace AnbarHelp.Forms
                 return;
             }
 
-            var r = diffMain.EkhtelafMaliAndAnbarDetail(DiffDtoResult.TObject.difffMalIAndAnbar.Last().PeigiriNo, DiffDtoResult.TObject.difffMalIAndAnbar.Last().PeigiriDate
-                , serverInfo.serverName, serverInfo.dbName);
-          
-            
             this.ServerComBox.Visible = false;
             this.LblServerSelect.Visible = false;
             this.ToDateTxt.Visible = false;
             this.FromDateTxt.Visible = false;
             this.ServerSelected.Visible = false;
-            
+
             this.dataGridView1.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
             this.dataGridView1.Visible = true;
 
-            if (diffMain.ControllTarakonesh111And61(result.TObject) == null)
+            if (diffMain.ControllTarakonesh111And61(result.TObject) != null)
             {
                 this.Cursor = Cursors.Default;
-                MessageBox.Show(" تراکنس های 111 و 61 دارای بیزنس متفاوت هستند که با توجه محسابات انجام شده هیچگونه مغایرتی ندارند");
+                MessageBox.Show(" تراکنس های 111 و 61 دارای بیزنس متفاوت هستند که با توجه محاسبات انجام شده هیچگونه مغایرتی ندارند");
                 return;
             }
+            List<DetailProps> detailProps = new List<DetailProps>();
+            foreach (var item in DiffDtoResult.TObject.Select(t => t.difffMalIAndAnbar))
+            {
+                detailProps.AddRange(item.Select(i => new DetailProps(i.PeigiriNo, i.PeigiriDate)));
+            }
+            //foreach (var item in DiffDtoResult.TObject.Select(t => t.DiffAnbarAndMali))
+            //{
+            //    detailProps.AddRange(item.Select(i => new DetailProps(i.SanadNO, i.SanadDate)));
+            //}
 
-            this.GVDiffAnbarAndMali.DataSource = DiffDtoResult.TObject.DiffAnbarAndMali.ToList();
+            BaseResult<List<EkhtelafMaliAndAnbarDetail>> details = diffMain.EkhtelafMaliAndAnbarDetail(detailProps, serverInfo.serverName, serverInfo.dbName);
+            if (!details.IsSuccess)
+            {
+                this.Cursor = Cursors.Default;
+                MessageBox.Show(details.ErrorMessage);
+                return;
+            }
+            DataTable table = new DataTable();
+            table.Columns.Add("یافت نشده ها ", typeof(string));
+            table.Columns.Add("حذف شده از اسناد انبار", typeof(string));
+            table.Columns.Add("تغییر تاریخ", typeof(string));
+            table.Columns.Add("تغییر شماره سند ", typeof(string));
+            table.Columns[0].DefaultValue = '-';
+            foreach (var item in details.TObject)
+            {
+                table.Rows.Add(item.sanadThatsNotFound, item.sanadThatsRemoveFromSanad, item.SanadThatsUpdatedDate, item.SanadWith2SanadNo);
+            }
+
+
+            GVResultAnbarAndMali.DataSource = table;
+            GVResultAnbarAndMali.Visible = true;
+
+            var dAM = new List<DiffAnbarAndMali>();
+            var dMA = new List<DiffMaliAndAnbar>();
+
+            foreach (var item in DiffDtoResult.TObject.Select(p => p.DiffAnbarAndMali))
+            {
+                dAM.AddRange(item);
+            }
+            
+
+            this.GVDiffAnbarAndMali.DataSource = dAM;
             this.GVDiffAnbarAndMali.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
-
-            this.GVDiffMaliAndAnbar.DataSource = DiffDtoResult.TObject.difffMalIAndAnbar.ToList();
+            this.GVDiffAnbarAndMali.Refresh();
+            foreach (var item in DiffDtoResult.TObject.Select(p => p.difffMalIAndAnbar))
+            {
+                dMA.AddRange(item);
+            }
+            this.GVDiffMaliAndAnbar.DataSource = dMA;
             this.GVDiffMaliAndAnbar.AutoSizeColumnsMode = DataGridViewAutoSizeColumnsMode.AllCells;
+
 
             this.GVDiffMaliAndAnbar.Visible = true;
             this.GVDiffAnbarAndMali.Visible = true;

@@ -30,9 +30,9 @@ namespace CheckKardexManfi
                 List<double> VahedeTejariSn = new List<double>();
                 try
                 {
-                    foreach (int item in sanadSn)
+                    for (int i = 0; i < sanadSn.Count(); i++)
                     {
-                        VahedeTejariSn.Add(con.QuerySingle<double>(Queries.GetVahedeTtejariBySanad.Replace("MySanadSN", sanadSn[item].ToString())));
+                        VahedeTejariSn.Add(con.QuerySingle<double>(Queries.GetVahedeTtejariBySanad.Replace("MySanadSN", sanadSn[i].ToString())));
                     }
                     if (VahedeTejariSn.Count() <= 0)
                         return new BaseResult<(string, string, double)>(("", "", 0), "واحد تجاری برای اولین سند یافت نشد ", false);

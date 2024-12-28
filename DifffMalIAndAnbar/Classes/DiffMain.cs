@@ -82,12 +82,12 @@ namespace DifffMalIAndAnbar.Classes
         {
             if (diff.Count() < 2 || !diff.Any(d => d.TarakoneshSN_Asli == 61) || !diff.Any(d => d.TarakoneshSN_Asli == 111))
                 return null;
-            var DiffWithGroupBy = diff.AsQueryable().Where(p=>p.TarakoneshSN_Asli == 61 || p.TarakoneshSN_Asli == 111)
-                .GroupBy(p=>p.Anbar_SanadDate);
+            var DiffWithGroupBy = diff.AsQueryable().Where(p => p.TarakoneshSN_Asli == 61 || p.TarakoneshSN_Asli == 111)
+                .GroupBy(p => p.Anbar_SanadDate);
 
             List<Dtos.DiffrentMaliAndAnbarTotalDto>? Result = null;
             foreach (var group in DiffWithGroupBy)
-            { 
+            {
                 decimal total = 0;
                 foreach (var item in group)
                 {
@@ -102,67 +102,81 @@ namespace DifffMalIAndAnbar.Classes
             return Result;
         }
 
-        
-        public BaseResult<DiffrentDto> FindDiffrentReturnSanad(string TarakoneshDs, string SanadDate, string serverName, string dbName)
+
+        public BaseResult<List<DiffrentDto>> FindDiffrentReturnSanad(List<EkhtelafProp> ekhtelafProps, string serverName, string dbName)
         {
             Db.CSBuilder(serverName, dbName);
             IDbConnection Conn;
             if (!Db.checkConnection(out Conn).IsSuccess)
             {
-                return new BaseResult<DiffrentDto>(ErrMes: "اتصال شما به سرور بر قرار نیست",
+                return new BaseResult<List<DiffrentDto>>(ErrMes: "اتصال شما به سرور بر قرار نیست",
                     IsSuccess: false,
-                    TObject: new DiffrentDto());
+                    TObject: new List<DiffrentDto>());
             }
-            string queryMaliAndAnbar = Queries.DiffMaliAndAnbarBuilder(TarakoneshDs, SanadDate);
-            string queryAnbarAndMali = Queries.DiffDiffAnbarAndMaliBuilder(TarakoneshDs, SanadDate);
+            List<DiffrentDto> diffrentDtos = new List<DiffrentDto>();
+            using (Conn)
+            {
+                foreach (var item in ekhtelafProps)
+                {
+                    string queryMaliAndAnbar = Queries.DiffMaliAndAnbarBuilder(item.TarakoneshDs, item.SanadDate);
+                    string queryAnbarAndMali = Queries.DiffDiffAnbarAndMaliBuilder(item.TarakoneshDs, item.SanadDate);
+                    try
+                    {
+                        var Result1 = Db.GetAllT<DiffMaliAndAnbar>(queryMaliAndAnbar, Conn);
+                        var Result2 = Db.GetAllT<DiffAnbarAndMali>(queryAnbarAndMali, Conn);
+                        diffrentDtos.Add(new DiffrentDto() { difffMalIAndAnbar = Result1, DiffAnbarAndMali = Result2 });
+                    }
+                    catch (System.Exception e)
+                    {
+                        return new BaseResult<List<DiffrentDto>>(diffrentDtos, "مشکلی در فرخوانی داده پیش آمده" + Environment.NewLine + e.Message, false);
+                    }
+                }
+                return new BaseResult<List<DiffrentDto>>(diffrentDtos);
+
+
+            }
+
+
+        }
+
+        public BaseResult<List<EkhtelafMaliAndAnbarDetail>> EkhtelafMaliAndAnbarDetail(List<DetailProps> detailProps, string serverName, string dbName)
+        {
+
+            Db.CSBuilder(serverName, dbName);
+            IDbConnection Conn;
+            if (!Db.checkConnection(out Conn).IsSuccess)
+            {
+                return new BaseResult<List<EkhtelafMaliAndAnbarDetail>>(ErrMes: "اتصال شما به سرور بر قرار نیست",
+                    IsSuccess: false,
+                    TObject: new List<EkhtelafMaliAndAnbarDetail>());
+            }
+
+            string query;
+            List<EkhtelafMaliAndAnbarDetail> result = new List<EkhtelafMaliAndAnbarDetail>();
+            IEnumerable<EkhtelafMaliAndAnbarDetail> ektelaf = new List<EkhtelafMaliAndAnbarDetail>();
             using (Conn)
             {
                 try
                 {
-                    var Result1 = Db.GetAllT<DiffMaliAndAnbar>(queryMaliAndAnbar, Conn);
-                    var Result2 = Db.GetAllT<DiffAnbarAndMali>(queryAnbarAndMali, Conn);
-                    return new BaseResult<DiffrentDto>(new DiffrentDto() { difffMalIAndAnbar = Result1, DiffAnbarAndMali = Result2 });
+                    foreach (var item in detailProps)
+                    {
+
+                        query = Queries.MultipleQueryForMaliAndAnbarBuilder(item.sanadNo, item.sanadDate);
+                        ektelaf = Db.GetAllT<EkhtelafMaliAndAnbarDetail>(query, Conn);
+                        foreach (var det in ektelaf)
+                        {
+                            result.Add(det);
+                        }
+                    }
+
+                    return new BaseResult<List<EkhtelafMaliAndAnbarDetail>>(result);
                 }
-                catch (System.Exception e)
+                catch (Exception)
                 {
-
-                    return new BaseResult<DiffrentDto>(new DiffrentDto(), "مشکلی در فرخوانی داده پیش آمده" + Environment.NewLine + e.Message,false);
+                    return new BaseResult<List<EkhtelafMaliAndAnbarDetail>>(new List<EkhtelafMaliAndAnbarDetail>(), "یا خطا در کد SQl اتصال شما به سرور بر قرار نیست",
+                    IsSuccess: false);
                 }
-               
-            }
 
-                
-        }
-
-        public BaseResult<EkhtelafMaliAndAnbarDetail> EkhtelafMaliAndAnbarDetail(string sanadNo ,string sanadDate, string serverName, string dbName)
-        {
-
-            Db.CSBuilder(serverName, dbName);
-            IDbConnection Conn;
-            if (!Db.checkConnection(out Conn).IsSuccess)
-            {
-                return new BaseResult<EkhtelafMaliAndAnbarDetail>(ErrMes: "اتصال شما به سرور بر قرار نیست",
-                    IsSuccess: false,
-                    TObject: new EkhtelafMaliAndAnbarDetail());
-            }
-
-            string query = Queries.MultipleQueryForMaliAndAnbarBuilder(sanadNo, sanadDate);
-            using (Conn)
-            {
-                //var result = Db.GetAllT<EkhtelafMaliAndAnbarDetail>(query, Conn);
-                var result = Conn.QueryMultiple(query);
-                var res1 = result.Read<Sanads>().ToList();
-                var res2 = result.Read<Sanads>().ToList();
-                var res3 = result.Read<Sanads>().ToList();
-                var res4 = result.Read<Sanads>().ToList();
-
-                return new BaseResult<EkhtelafMaliAndAnbarDetail>(new Dtos.EkhtelafMaliAndAnbarDetail()
-                {
-                    sanadThatsNotFound =  res1,
-                    sanadThatsRemoveFromSanad = res2,
-                    SanadThatsUpdatedDate = res3,
-                    SanadWith2SanadNo = res4
-                });
             }
         }
 

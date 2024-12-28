@@ -8,15 +8,10 @@ namespace DifffMalIAndAnbar.Dtos
 {
     public class EkhtelafMaliAndAnbarDetail
     {
-        public IList<Sanads> sanadThatsNotFound { get; set; }
-        public IList<Sanads> sanadThatsRemoveFromSanad { get; set; }
-        public IList<Sanads> SanadThatsUpdatedDate { get; set; }
-        public IList<Sanads> SanadWith2SanadNo { get; set; }
+        public string sanadThatsNotFound { get; set; }
+        public decimal sanadThatsRemoveFromSanad { get; set; }
+        public decimal SanadThatsUpdatedDate { get; set; }
+        public decimal SanadWith2SanadNo { get; set; }
     }
 
-    public class Sanads
-    {
-        public string sanadSN { get; set; }
-        public string sanadNo { get; set; }
-    }
 }
